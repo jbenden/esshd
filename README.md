@@ -1,6 +1,6 @@
 # Sshd
 
-**TODO: Add description**
+A very simple way to add SSHd capabilities to a Mix application.
 
 ## Installation
 
@@ -13,7 +13,21 @@ def deps do
 end
 ```
 
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/esshd](https://hexdocs.pm/esshd).
+After adding `esshd` as a dependency, ensure it is started before your own
+application in `mix.exs`:
 
+```elixir
+def application do
+  [extra_applications: [:esshd]]
+end
+```
+
+## Usage
+
+Create your own module that implements the behaviour `Sshd.GenSshd` and ensure
+it is registered before your own application starts, by way of your applications
+configuration inside `config/config.exs`:
+
+```elixir
+config :esshd, handler: "MyApplication.GenSshd"
+```
