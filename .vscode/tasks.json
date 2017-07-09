@@ -1,0 +1,52 @@
+{
+  "version": "0.1.0",
+  "command": "mix",
+  "isShellCommand": true,
+  "showOutput": "always",
+  "suppressTaskName": true,
+  "tasks": [
+    {
+      "taskName": "build",
+      "args": [
+        "compile"
+      ],
+      "problemMatcher": [
+        "$mixCompileError",
+        "$mixCompileWarning"
+      ],
+      "isBuildCommand": true
+    },
+    {
+      "taskName": "credo",
+      "args": [
+        "credo"
+      ],
+      "problemMatcher": [
+        "$mixCompileError",
+        "$mixCompileWarning"
+      ]
+    },
+    {
+      "taskName": "dialyzer",
+      "args": [
+        "dialyzer"
+      ],
+      "problemMatcher": [
+        "$mixCompileError",
+        "$mixCompileWarning"
+      ]
+    },
+    {
+      "taskName": "test",
+      "args": [
+        "test"
+      ],
+      "problemMatcher": [
+        "$mixCompileError",
+        "$mixCompileWarning",
+        "$mixTestFailure"
+      ],
+      "isTestCommand": true
+    }
+  ]
+}
