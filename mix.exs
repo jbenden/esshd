@@ -17,17 +17,26 @@ defmodule Sshd.Mixfile do
      dialyzer: [
         plt_add_deps: :apps_direct,
         flags: [:unmatched_returns, :error_handling, :race_conditions, :no_opaque]
-     ]]
+     ],
+     test_coverage: [tool: ExCoveralls],
+     preferred_cli_env: ["coveralls": :test, "coveralls.detail": :test, "coveralls.post": :test, "coveralls.html": :test, "coveralls.json": :test],
+    ]
   end
 
   def application do
     # Specify extra applications you'll use from Erlang/Elixir
-    [extra_applications: [:logger],
+    [extra_applications: [:logger, :public_key, :ssh],
      mod: {Sshd.Application, []},
      env: [
        enabled: true,
-       port: 10_022,
-       handler: "Sshd.Simple"
+       parallel_login: false,
+       max_sessions: 50,
+       idle_time: 86_400_000 * 3,
+       negotiation_timeout: 11_000,
+       preferred_algorithms: nil,
+       password_authenticator: "Sshd.PasswordAuthenticator.Default",
+       access_list: "Sshd.AccessList.Default",
+       public_key_authenticator: "Sshd.PublicKeyAuthenticator.Default",
      ]]
   end
 
@@ -37,6 +46,7 @@ defmodule Sshd.Mixfile do
       {:cortex, "~> 0.1", only: [:dev, :test]},
       {:dialyxir, "~> 0.5", only: [:dev], runtime: false},
       {:ex_doc, "~> 0.14", only: [:dev], runtime: false},
+      {:excoveralls, "~> 0.4", only: [:dev, :test], runtime: false},
     ]
   end
 

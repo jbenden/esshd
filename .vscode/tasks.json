@@ -19,7 +19,8 @@
     {
       "taskName": "credo",
       "args": [
-        "credo"
+        "credo",
+        "--strict"
       ],
       "problemMatcher": [
         "$mixCompileError",
@@ -30,6 +31,26 @@
       "taskName": "dialyzer",
       "args": [
         "dialyzer"
+      ],
+      "problemMatcher": [
+        "$mixCompileError",
+        "$mixCompileWarning"
+      ]
+    },
+    {
+      "taskName": "docs",
+      "args": [
+        "docs"
+      ],
+      "problemMatcher": [
+        "$mixCompileError",
+        "$mixCompileWarning"
+      ]
+    },
+    {
+      "taskName": "coverage",
+      "args": [
+        "coveralls.json"
       ],
       "problemMatcher": [
         "$mixCompileError",

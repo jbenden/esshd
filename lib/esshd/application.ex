@@ -12,6 +12,8 @@ defmodule Sshd.Application do
     children = [
       # Starts a worker by calling: Sshd.Worker.start_link(arg1, arg2, arg3)
       # worker(Sshd.Worker, [arg1, arg2, arg3]),
+      worker(Sshd.Server, []),
+      worker(Sshd.Sessions, []),
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
