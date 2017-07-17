@@ -42,7 +42,7 @@ selecting the solution that best matches your project's desired goal.
 
 Once installed, add the following configuration to your project:
 
-```
+```elixir
 app_dir = Application.app_dir(:myapp)
 priv_dir = Path.join([app_dir, "priv"])
 
@@ -62,7 +62,7 @@ To generate the needed OpenSSH host keys, change in to your application's
 `priv` directory and execute an appropriate command. An example of such
 command sequences are as follows:
 
-```
+```sh
 $ cd priv
 $ ssh-keygen -b 256 -t ecdsa -f ssh_host_ecdsa_key
 ```
@@ -74,7 +74,7 @@ file within your application's `priv` directory.
 
 Once installed, add the following configuration to your project:
 
-```
+```elixir
 app_dir = Application.app_dir(:myapp)
 priv_dir = Path.join([app_dir, "priv"])
 
@@ -94,7 +94,7 @@ To generate the needed OpenSSH host keys, change in to your application's
 `priv` directory and execute an appropriate command. An example of such
 command sequences are as follows:
 
-```
+```sh
 $ cd priv
 $ ssh-keygen -b 256 -t ecdsa -f ssh_host_ecdsa_key
 ```
