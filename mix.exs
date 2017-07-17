@@ -11,8 +11,9 @@ defmodule Sshd.Mixfile do
      start_permanent: Mix.env == :prod,
      deps: deps(),
      package: package(),
-     description: "A simple way to add SSHd capabilities to your Elixir application",
-     name: "Sshd",
+     description: "A simple way to add SSH server capabilities to your Elixir or Erlang application",
+     name: "esshd",
+     source_url: "https://github.com/jbenden/esshd",
      docs: docs(),
      dialyzer: [
         plt_add_deps: :apps_direct,
