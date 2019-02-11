@@ -66,11 +66,9 @@ command sequences are as follows:
 $ [ -d priv ] || mkdir priv
 $ chmod 700 priv
 $ cd priv
-$ ssh-keygen -b 256 -t ecdsa -f ssh_host_ecdsa_key
-$ echo "===> Please press ENTER/RETURN for *ALL* passphrase entries!!!!!"
-$ ssh-keygen -b 256  -t ecdsa -f ssh_host_ecdsa_key
-$ ssh-keygen -b 1024 -t dsa -f ssh_host_dsa_key
-$ ssh-keygen -b 2048 -t rsa -f ssh_host_rsa_key
+$ ssh-keygen -N "" -b 256  -t ecdsa -f ssh_host_ecdsa_key
+$ ssh-keygen -N "" -b 1024 -t dsa -f ssh_host_dsa_key
+$ ssh-keygen -N "" -b 2048 -t rsa -f ssh_host_rsa_key
 $ echo 127.0.0.1,127.0.0.1 `cat ssh_host_ecdsa_key.pub` > known_hosts
 $ chmod 644 known_hosts
 ```
@@ -106,11 +104,9 @@ command sequences are as follows:
 $ [ -d priv ] || mkdir priv
 $ chmod 700 priv
 $ cd priv
-$ ssh-keygen -b 256 -t ecdsa -f ssh_host_ecdsa_key
-$ echo "===> Please press ENTER/RETURN for *ALL* passphrase entries!!!!!"
-$ ssh-keygen -b 256  -t ecdsa -f ssh_host_ecdsa_key
-$ ssh-keygen -b 1024 -t dsa -f ssh_host_dsa_key
-$ ssh-keygen -b 2048 -t rsa -f ssh_host_rsa_key
+$ ssh-keygen -N "" -b 256  -t ecdsa -f ssh_host_ecdsa_key
+$ ssh-keygen -N "" -b 1024 -t dsa -f ssh_host_dsa_key
+$ ssh-keygen -N "" -b 2048 -t rsa -f ssh_host_rsa_key
 $ echo 127.0.0.1,127.0.0.1 `cat ssh_host_ecdsa_key.pub` > known_hosts
 $ chmod 644 known_hosts
 ```
