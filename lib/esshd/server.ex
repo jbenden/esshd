@@ -50,8 +50,10 @@ defmodule Sshd.Server do
     preferred_algorithms =
       Application.fetch_env!(:esshd, :preferred_algorithms)
         || :ssh.default_algorithms()
+    subsystems = Application.fetch_env!(:esshd, :subsystems)
 
     case :ssh.daemon port, shell: &on_shell/2,
+                           subsystems: subsystems,
                            system_dir: priv_dir,
                            user_dir: priv_dir,
                            user_passwords: [],
