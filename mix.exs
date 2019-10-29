@@ -38,6 +38,7 @@ defmodule Sshd.Mixfile do
        password_authenticator: "Sshd.PasswordAuthenticator.Default",
        access_list: "Sshd.AccessList.Default",
        public_key_authenticator: "Sshd.PublicKeyAuthenticator.Default",
+       subsystems: [],
      ]]
   end
 
