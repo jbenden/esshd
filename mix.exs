@@ -20,7 +20,7 @@ defmodule Sshd.Mixfile do
         flags: [:unmatched_returns, :error_handling, :race_conditions, :no_opaque]
      ],
      test_coverage: [tool: ExCoveralls],
-     preferred_cli_env: ["coveralls": :test, "coveralls.detail": :test, "coveralls.post": :test, "coveralls.html": :test, "coveralls.json": :test],
+     preferred_cli_env: [coveralls: :test, "coveralls.detail": :test, "coveralls.post": :test, "coveralls.html": :test, "coveralls.json": :test],
     ]
   end
 
