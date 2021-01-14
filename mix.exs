@@ -39,6 +39,7 @@ defmodule Sshd.Mixfile do
        access_list: "Sshd.AccessList.Default",
        public_key_authenticator: "Sshd.PublicKeyAuthenticator.Default",
        subsystems: [],
+       handler: :elixir
      ]]
   end
 

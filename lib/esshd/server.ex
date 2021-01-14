@@ -8,6 +8,8 @@ defmodule Sshd.Server do
   require Logger
   alias Sshd.Sessions
 
+  @type handler :: :elixir | :erlang | {module(), atom(), any()}
+
   @doc false
   def start_link(_args) do
     enabled = Application.fetch_env!(:esshd, :enabled)
@@ -51,8 +53,9 @@ defmodule Sshd.Server do
       Application.fetch_env!(:esshd, :preferred_algorithms)
         || :ssh.default_algorithms()
     subsystems = Application.fetch_env!(:esshd, :subsystems)
+    handler = Application.fetch_env!(:esshd, :handler)
 
-    case :ssh.daemon port, shell: &on_shell/2,
+    case :ssh.daemon port, shell: &on_shell(&1, &2, handler),
                            subsystems: subsystems,
                            system_dir: priv_dir,
                            user_dir: priv_dir,
@@ -143,16 +146,9 @@ defmodule Sshd.Server do
 
   @doc false
   @spec on_shell_connect(String.t, peer_address, String.t) :: any
-  def on_shell_connect(username, {ip, port} = peer_address, method) do
-    handler_module = Application.fetch_env!(:esshd, :handler)
-
+  def on_shell_connect(username, peer_address, _method) do
     Sessions.set_username(self(), username)
     Sessions.set_peer_address(self(), peer_address)
-
-    spawn(Module.concat([handler_module]),
-          :on_connect,
-          [username, ip, port, method])
-    :ok
   end
 
   @doc false
@@ -170,21 +166,10 @@ defmodule Sshd.Server do
   end
 
   @doc false
-  @spec on_shell(String.t, peer_address) :: pid
-  def on_shell(username, {ip, port} = peer_address) do
-    # we now have a completely connected client SSH connection, so
-    # start a background Task to deal with the connection, and
-    # disconnect it from ourselves; for proper supervisor tree.
-    {_controlling_pid, session} = Sessions.get_by_peer_address(peer_address)
-    ssh_publickey = Map.get(session, "public_key")
+  @spec on_shell(String.t, peer_address, handler()) :: pid
+  def on_shell(username, peer, :elixir), do: on_shell(username, peer, {IEx, :start, [[]]})
 
-    ##
-    # Create a new Process and wire-up everything, then dispatch
-    ##
-    handler_module = Application.fetch_env!(:esshd, :handler)
-
-    spawn_link(Module.concat([handler_module]),
-               :incoming,
-               [username, ssh_publickey, ip, port])
+  def on_shell(_username, _peer_address, {m, f, a}) do
+    apply(m, f, a)
   end
 end
