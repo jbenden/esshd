@@ -101,7 +101,8 @@ defmodule Sshd.ShellHandler.Elixir do
   require IEx
 
   def on_shell(_username, _pubkey, _ip_address, _port_number) do
-    IEx.start([])
+    _ = IEx.start([])
+    :ok
   end
 
   def on_connect(_username, _ip_address, _port_number, _method), do: :ok
