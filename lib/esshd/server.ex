@@ -9,7 +9,7 @@ defmodule Sshd.Server do
   alias Sshd.Sessions
 
   @doc false
-  def start_link do
+  def start_link(_args) do
     enabled = Application.fetch_env!(:esshd, :enabled)
 
     GenServer.start_link(__MODULE__,
