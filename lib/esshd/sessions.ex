@@ -5,6 +5,10 @@ defmodule Sshd.Sessions do
   @type port_number :: :inet.port_number()
   @type peer_address :: {ip_address, port_number}
 
+  def child_spec(_args) do
+    %{id: __MODULE__, start: {__MODULE__, :start_link, []}, type: :worker}
+  end
+
   def start_link do
     Agent.start_link(fn -> Map.new end, name: __MODULE__)
   end
