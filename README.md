@@ -49,7 +49,7 @@ priv_dir = Path.join([app_dir, "priv"])
 config :esshd,
   enabled: true,
   priv_dir: priv_dir,
-  handler: "Sshd.ShellHandler.Elixir",
+  handler: :elixir,
   port: 10_022,
   public_key_authenticator: "Sshd.PublicKeyAuthenticator.AuthorizedKeys"
 ```
@@ -87,7 +87,7 @@ priv_dir = Path.join([app_dir, "priv"])
 config :esshd,
   enabled: true,
   priv_dir: priv_dir,
-  handler: "Sshd.ShellHandler.Erlang",
+  handler: :erlang,
   port: 10_022,
   public_key_authenticator: "Sshd.PublicKeyAuthenticator.AuthorizedKeys"
 ```
@@ -159,9 +159,12 @@ default setting shown:
   enabled or not. Useful in complex applications to disable
   all incoming SSH connection functionality, without a full
   recompile and deploy.
-* `handler :: string(Sshd.ShellHandler.Default)`: A string containing
-  the fully qualified module that implements the
-  `Sshd.ShellHandler` behavior.
+* `handler :: :erlang | :elixir | {m, f, a}`: The handler that should
+  respond to incoming SSH connections. It may be one of the simple
+  atoms, for simplicity; or, it may be a tuple containing a module,
+  function, and arguments. Note that the arguments are not presently
+  used. The module, function, and arguments option must implement
+  the `Sshd.ShellHandler` behavior.
 * `idle_time :: integer(86_400_000 * 3)`: The amount of time, in
   milliseconds, an idle connection may remain, before being automatically
   disconnected. This does not effect actively utilized connections.
