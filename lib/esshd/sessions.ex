@@ -10,7 +10,7 @@ defmodule Sshd.Sessions do
   end
 
   def start_link do
-    Agent.start_link(fn -> Map.new end, name: __MODULE__)
+    Agent.start_link(fn -> Map.new() end, name: __MODULE__)
   end
 
   @spec set_public_key(pid, binary) :: :ok
@@ -23,7 +23,7 @@ defmodule Sshd.Sessions do
     Agent.update(__MODULE__, &Map.put(&1, pid, session))
   end
 
-  @spec set_username(pid, String.t) :: :ok
+  @spec set_username(pid, String.t()) :: :ok
   def set_username(pid, username) do
     session =
       pid
@@ -59,6 +59,6 @@ defmodule Sshd.Sessions do
 
   @spec find_session(pid) :: map
   defp find_session(pid) do
-    Agent.get(__MODULE__, &Map.get(&1, pid)) || Map.new
+    Agent.get(__MODULE__, &Map.get(&1, pid)) || Map.new()
   end
 end

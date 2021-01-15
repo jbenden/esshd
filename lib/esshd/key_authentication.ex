@@ -6,34 +6,49 @@ defmodule Sshd.KeyAuthentication do
   alias Sshd.Sessions
   require Record
 
-  Record.defrecord :RSAPublicKey,  Record.extract(:RSAPublicKey, from_lib: "public_key/include/public_key.hrl")
-  Record.defrecord :RSAPrivateKey, Record.extract(:RSAPrivateKey, from_lib: "public_key/include/public_key.hrl")
-  Record.defrecord :DSAPrivateKey, Record.extract(:DSAPrivateKey, from_lib: "public_key/include/public_key.hrl")
-  Record.defrecord :'Dss-Parms',   Record.extract(:'Dss-Parms', from_lib: "public_key/include/public_key.hrl")
+  Record.defrecord(
+    :RSAPublicKey,
+    Record.extract(:RSAPublicKey, from_lib: "public_key/include/public_key.hrl")
+  )
+
+  Record.defrecord(
+    :RSAPrivateKey,
+    Record.extract(:RSAPrivateKey, from_lib: "public_key/include/public_key.hrl")
+  )
+
+  Record.defrecord(
+    :DSAPrivateKey,
+    Record.extract(:DSAPrivateKey, from_lib: "public_key/include/public_key.hrl")
+  )
+
+  Record.defrecord(
+    :"Dss-Parms",
+    Record.extract(:"Dss-Parms", from_lib: "public_key/include/public_key.hrl")
+  )
 
   @type public_key :: :public_key.public_key()
-  @type private_key :: map | map | term
-  @type public_key_algorithm :: :'ssh-rsa'| :'ssh-dss' | atom
+  @type private_key :: :public_key.private_key()
+  @type public_key_algorithm :: :"ssh-rsa" | :"ssh-dss" | atom
   @type user :: charlist()
-  @type daemon_options :: Keyword.t
+  @type daemon_options :: Keyword.t()
 
   require Logger
 
   @spec host_key(public_key_algorithm, daemon_options) ::
-    {:ok, private_key} | {:error, any}
+          {:ok, private_key} | {:error, any}
   def host_key(algorithm, daemon_options) do
     :ssh_file.host_key(algorithm, daemon_options)
   end
 
-  @spec is_auth_key(binary, user, daemon_options) :: boolean
+  @spec is_auth_key(term, user, daemon_options) :: boolean
   def is_auth_key(key, user, daemon_options) do
-    public_key_module =
-      Application.fetch_env!(:esshd, :public_key_authenticator)
+    public_key_module = Application.fetch_env!(:esshd, :public_key_authenticator)
 
-    case apply(Module.concat([public_key_module]),
-               :authenticate, [user, key, daemon_options]) do
-      false -> false
-      true  ->
+    case apply(Module.concat([public_key_module]), :authenticate, [user, key, daemon_options]) do
+      false ->
+        false
+
+      true ->
         Sessions.set_public_key(self(), key)
         true
     end
@@ -41,7 +56,7 @@ defmodule Sshd.KeyAuthentication do
 
   # server uses this to find individual keys for an individual user when
   # they try to log in with a public key
-  @spec ssh_dir(:user | :system | {:remoteuser, user}, Keyword.t) :: String.t
+  @spec ssh_dir(:user | :system | {:remoteuser, user}, Keyword.t()) :: String.t()
   def ssh_dir({:remoteuser, user}, opts) do
     case Keyword.fetch(opts, :user_dir_fun) do
       :error ->
@@ -49,7 +64,9 @@ defmodule Sshd.KeyAuthentication do
           {:ok, dir} -> dir
           :error -> default_user_dir()
         end
-      {:ok, fun} -> apply(fun, [user])
+
+      {:ok, fun} ->
+        apply(fun, [user])
     end
   end
 
@@ -61,7 +78,7 @@ defmodule Sshd.KeyAuthentication do
 
   @spec default_user_dir() :: binary
   def default_user_dir do
-    {:ok, [[home|_]]} = :init.get_argument(:home)
+    {:ok, [[home | _]]} = :init.get_argument(:home)
     user_dir = Path.join(home, ".ssh")
     :ok = :filelib.ensure_dir(Path.join(user_dir, "dummy"))
     :ok = :file.change_mode(user_dir, @perm700)

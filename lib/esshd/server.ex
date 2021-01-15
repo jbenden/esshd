@@ -4,6 +4,7 @@ defmodule Sshd.Server do
   its dispatch.
   """
 
+  require IEx
   use GenServer
   require Logger
   alias Sshd.Sessions
@@ -14,14 +15,17 @@ defmodule Sshd.Server do
   def start_link(_args) do
     enabled = Application.fetch_env!(:esshd, :enabled)
 
-    GenServer.start_link(__MODULE__,
-      %{pid: nil, enabled: enabled}, name: __MODULE__)
+    GenServer.start_link(
+      __MODULE__,
+      %{pid: nil, enabled: enabled},
+      name: __MODULE__
+    )
   end
 
   @doc false
   def init(%{enabled: true} = state) do
     # start listening for incoming SSH connections
-    GenServer.cast self(), :start
+    GenServer.cast(self(), :start)
 
     {:ok, state}
   end
@@ -40,51 +44,57 @@ defmodule Sshd.Server do
   @doc false
   def handle_cast(:start, state) do
     # Gather settings from the application configuration
-    port                 = Application.fetch_env!(:esshd, :port)
-    priv_dir             = Application.fetch_env!(:esshd, :priv_dir)
+    port = Application.fetch_env!(:esshd, :port)
+
+    priv_dir =
+      Application.fetch_env!(:esshd, :priv_dir)
       # credo:disable-for-next-line
-      |> String.to_charlist
-    parallel_login       = Application.fetch_env!(:esshd, :parallel_login)
-    max_sessions         = Application.fetch_env!(:esshd, :max_sessions)
-    idle_time            = Application.fetch_env!(:esshd, :idle_time)
-    negotiation_timeout  =
-      Application.fetch_env!(:esshd, :negotiation_timeout)
+      |> String.to_charlist()
+
+    parallel_login = Application.fetch_env!(:esshd, :parallel_login)
+    max_sessions = Application.fetch_env!(:esshd, :max_sessions)
+    idle_time = Application.fetch_env!(:esshd, :idle_time)
+    negotiation_timeout = Application.fetch_env!(:esshd, :negotiation_timeout)
+
     preferred_algorithms =
-      Application.fetch_env!(:esshd, :preferred_algorithms)
-        || :ssh.default_algorithms()
+      Application.fetch_env!(:esshd, :preferred_algorithms) ||
+        :ssh.default_algorithms()
+
     subsystems = Application.fetch_env!(:esshd, :subsystems)
     handler = Application.fetch_env!(:esshd, :handler)
 
-    case :ssh.daemon port, shell: &on_shell(&1, &2, handler),
-                           subsystems: subsystems,
-                           system_dir: priv_dir,
-                           user_dir: priv_dir,
-                           user_passwords: [],
-                           parallel_login: parallel_login,
-                           max_sessions: max_sessions,
-                           id_string: :random,
-                           idle_time: idle_time,
-                           negotiation_timeout: negotiation_timeout,
-                           preferred_algorithms: preferred_algorithms,
-                           failfun: &on_shell_unauthorized/3,
-                           connectfun: &on_shell_connect/3,
-                           disconnectfun: &on_shell_disconnect/1,
-                           key_cb: Sshd.KeyAuthentication,
-                           pwdfun: &on_password/4 do
+    case :ssh.daemon(port,
+           shell: &on_shell(&1, &2, handler),
+           subsystems: subsystems,
+           system_dir: priv_dir,
+           user_dir: priv_dir,
+           user_passwords: [],
+           parallel_login: parallel_login,
+           max_sessions: max_sessions,
+           id_string: :random,
+           idle_time: idle_time,
+           negotiation_timeout: negotiation_timeout,
+           preferred_algorithms: preferred_algorithms,
+           failfun: &on_shell_unauthorized/3,
+           connectfun: &on_shell_connect/3,
+           disconnectfun: &on_shell_disconnect/1,
+           key_cb: Sshd.KeyAuthentication,
+           pwdfun: &on_password/4
+         ) do
       {:ok, pid} ->
         # link the created SSH daemon to ourself
-        Process.link pid
+        Process.link(pid)
 
         # Return, with state, and sleep
         {:noreply, %{state | pid: pid}, :hibernate}
 
       {:error, :eaddrinuse} ->
-        :ok = Logger.error "Unable to bind to local TCP port; the address is already in use"
-        #raise RuntimeError, "TCP port #{port} is in use"
+        :ok = Logger.error("Unable to bind to local TCP port; the address is already in use")
+        # raise RuntimeError, "TCP port #{port} is in use"
         {:noreply, state, :hibernate}
 
       {:error, err} ->
-        raise "Unhandled error encountered: #{inspect err}"
+        raise "Unhandled error encountered: #{inspect(err)}"
     end
   end
 
@@ -94,15 +104,18 @@ defmodule Sshd.Server do
 
   @doc false
   @spec on_password(
-    username :: charlist,
-    password :: charlist,
-    peer_address :: peer_address,
-    state :: any
-  ) :: :disconnect | {boolean, map}
+          username :: charlist,
+          password :: charlist,
+          peer_address :: peer_address,
+          state :: any
+        ) :: :disconnect | {boolean, map}
   def on_password(username, password, peer_address, state) do
-    :ok = Logger.debug fn ->
-      "Checking #{inspect username} with password #{inspect password} from #{inspect peer_address}"
-    end
+    :ok =
+      Logger.debug(fn ->
+        "Checking #{inspect(username)} with password #{inspect(password)} from #{
+          inspect(peer_address)
+        }"
+      end)
 
     # credo:disable-for-next-line
     stateN =
@@ -113,30 +126,40 @@ defmodule Sshd.Server do
 
     # check the incoming network details via AccessList
     accesslist_module = Application.fetch_env!(:esshd, :access_list)
+
     case apply(Module.concat([accesslist_module]), :permit?, [peer_address]) do
-      false -> :disconnect
-      true  -> valid_password_for_user?(peer_address,
-                                        username,
-                                        password,
-                                        stateN)
+      false ->
+        :disconnect
+
+      true ->
+        valid_password_for_user?(
+          peer_address,
+          username,
+          password,
+          stateN
+        )
     end
   end
 
   @spec valid_password_for_user?(
-    peer_address :: peer_address,
-    username :: charlist,
-    password :: charlist,
-    state :: map
-    ) :: :disconnect | boolean | {boolean, any}
+          peer_address :: peer_address,
+          username :: charlist,
+          password :: charlist,
+          state :: map
+        ) :: :disconnect | boolean | {boolean, any}
   defp valid_password_for_user?(peer_address, username, password, state) do
     password_module = Application.fetch_env!(:esshd, :password_authenticator)
-    if apply(Module.concat([password_module]),
-             :authenticate, [username, password]) do
+
+    if apply(Module.concat([password_module]), :authenticate, [username, password]) do
       {true, state}
     else
       # drop the connection AFTER N password attempts
       if state.attempts >= 2 do
-        :ok = Logger.warn "ATTEMPT TO ACCESS FAILED for #{inspect username} from #{inspect peer_address}"
+        :ok =
+          Logger.warn(
+            "ATTEMPT TO ACCESS FAILED for #{inspect(username)} from #{inspect(peer_address)}"
+          )
+
         :disconnect
       else
         {false, %{state | attempts: state.attempts + 1}}
@@ -145,18 +168,20 @@ defmodule Sshd.Server do
   end
 
   @doc false
-  @spec on_shell_connect(String.t, peer_address, String.t) :: any
+  @spec on_shell_connect(String.t(), peer_address, String.t()) :: any
   def on_shell_connect(username, peer_address, _method) do
     Sessions.set_username(self(), username)
     Sessions.set_peer_address(self(), peer_address)
   end
 
   @doc false
-  @spec on_shell_unauthorized(String.t, peer_address, term) :: any
+  @spec on_shell_unauthorized(String.t(), peer_address, term) :: any
   def on_shell_unauthorized(username, {ip, port}, reason) do
-    Logger.warn """
-    Authentication failure for #{inspect username} from #{inspect ip}:#{inspect port}: #{inspect reason}
-    """
+    Logger.warn("""
+    Authentication failure for #{inspect(username)} from #{inspect(ip)}:#{inspect(port)}: #{
+      inspect(reason)
+    }
+    """)
   end
 
   @doc false
@@ -166,10 +191,20 @@ defmodule Sshd.Server do
   end
 
   @doc false
-  @spec on_shell(String.t, peer_address, handler()) :: pid
-  def on_shell(username, peer, :elixir), do: on_shell(username, peer, {IEx, :start, [[]]})
+  # @spec on_shell(String.t, peer_address, handler()) :: pid
+  def on_shell(_username, _peer, :erlang), do: :shell.start([])
 
-  def on_shell(_username, _peer_address, {m, f, a}) do
-    apply(m, f, a)
+  @doc false
+  # @spec on_shell(String.t, peer_address, handler()) :: pid
+  def on_shell(_username, _peer, :elixir), do: IEx.start([])
+
+  @spec on_shell(String.t(), peer_address, handler()) :: pid
+  def on_shell(username, {ip, port}, _mfa) do
+    ##
+    # Create a new Process and wire-up everything, then dispatch
+    ##
+    {m, f, _} = Application.fetch_env!(:esshd, :handler)
+
+    spawn_link(m, f, [username, "", ip, port])
   end
 end

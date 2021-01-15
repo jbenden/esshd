@@ -6,51 +6,53 @@ defmodule Sshd.ShellHandler.Example do
   use Sshd.ShellHandler
 
   def on_shell(_username, _pubkey, _ip, _port) do
-    :ok = IO.puts "Interactive example SSH shell - type exit ENTER to quit"
+    :ok = IO.puts("Interactive example SSH shell - type exit ENTER to quit")
     loop(run_state([]))
   end
 
   def on_connect(username, ip, port, method) do
-    Logger.debug fn ->
+    Logger.debug(fn ->
       """
-      Incoming SSH shell #{inspect self()} requested for #{username} from #{inspect ip}:#{inspect port} using #{inspect method}
+      Incoming SSH shell #{inspect(self())} requested for #{username} from #{inspect(ip)}:#{
+        inspect(port)
+      } using #{inspect(method)}
       """
-    end
+    end)
   end
 
   def on_disconnect(username, ip, port) do
-    Logger.debug fn ->
-      "Disconnecting SSH shell for #{username} from #{inspect ip}:#{inspect port}"
-    end
+    Logger.debug(fn ->
+      "Disconnecting SSH shell for #{username} from #{inspect(ip)}:#{inspect(port)}"
+    end)
   end
 
   defp loop(state) do
     self_pid = self()
-    counter  = state.counter
-    prefix   = state.prefix
+    counter = state.counter
+    prefix = state.prefix
 
     input = spawn(fn -> io_get(self_pid, prefix, counter) end)
-    wait_input state, input
+    wait_input(state, input)
   end
 
   defp wait_input(state, input) do
     receive do
       {:input, ^input, "exit\n"} ->
-        IO.puts "Exiting..."
+        IO.puts("Exiting...")
 
       {:input, ^input, code} when is_binary(code) ->
         code = String.trim(code)
 
-        IO.puts "Received shell command: #{inspect code}"
+        IO.puts("Received shell command: #{inspect(code)}")
 
         loop(%{state | counter: state.counter + 1})
 
       {:error, :interrupted} ->
-        IO.puts "Caught Ctrl+C..."
+        IO.puts("Caught Ctrl+C...")
         loop(%{state | counter: state.counter + 1})
 
       {:input, ^input, msg} ->
-        :ok = Logger.warn "received unknown message: #{inspect msg}"
+        :ok = Logger.warn("received unknown message: #{inspect(msg)}")
         loop(%{state | counter: state.counter + 1})
     end
   end
@@ -63,11 +65,12 @@ defmodule Sshd.ShellHandler.Example do
 
   defp io_get(pid, prefix, counter) do
     prompt = prompt(prefix, counter)
-    send pid, {:input, self(), IO.gets(:stdio, prompt)}
+    send(pid, {:input, self(), IO.gets(:stdio, prompt)})
   end
 
   defp prompt(prefix, counter) do
-    prompt = "%prefix(%node)%counter>"
+    prompt =
+      "%prefix(%node)%counter>"
       |> String.replace("%counter", to_string(counter))
       |> String.replace("%prefix", to_string(prefix))
       |> String.replace("%node", to_string(node()))

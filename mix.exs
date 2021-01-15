@@ -26,7 +26,7 @@ defmodule Sshd.Mixfile do
 
   def application do
     # Specify extra applications you'll use from Erlang/Elixir
-    [extra_applications: [:logger, :public_key, :ssh],
+    [extra_applications: [:logger, :public_key, :ssh, :iex],
      mod: {Sshd.Application, []},
      env: [
        enabled: true,

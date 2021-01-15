@@ -8,7 +8,7 @@ priv_dir = Path.join([app_dir, "test", "priv"])
 
 config :esshd,
   enabled: true,
-  handler: "Sshd.ShellHandler.Example",
+  handler: {Sshd.ShellHandler.Example, :incoming, [[]]},
   port: 65432,
   priv_dir: priv_dir,
   password_authenticator: "Sshd.PasswordAuthenticator.Test",
