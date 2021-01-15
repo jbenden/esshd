@@ -117,7 +117,7 @@ defmodule SSHClient do
         {:loop, {chn, tout, stdout, stderr, new_status, closed}}
 
       {:closed, ^chn} ->
-        {:loop, {chn, tout, stdout, stderr, status, true}}
+        {:loop, {chn, tout, stdout, stderr, 0, true}}
 
       # {:error, reason}
       any ->
