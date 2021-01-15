@@ -33,3 +33,5 @@ jobs:
       run: mix dialyzer
     - name: Run tests
       run: mix test
+      env:
+        FILESYSTEM_FSINOTIFY_EXECUTABLE_FILE: /bin/true
