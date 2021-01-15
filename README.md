@@ -20,7 +20,7 @@ by adding `esshd` to your list of dependencies in `mix.exs`:
 
 ```elixir
 def deps do
-  [{:esshd, "~> 0.1.0"}]
+  [{:esshd, "~> 0.2.0"}]
 end
 ```
 
@@ -202,6 +202,6 @@ default setting shown:
 
 ## License
 
-Copyright (C) 2017 [Joseph Benden](mailto:joe@benden.us).
+Copyright (C) 2017-2021 [Joseph Benden](mailto:joe@benden.us).
 
 Licensed under the [Apache 2.0 License](https://opensource.org/licenses/Apache-2.0).
