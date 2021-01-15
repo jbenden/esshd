@@ -13,7 +13,7 @@ defmodule Sshd.PublicKeyAuthenticator do
 
       @type username :: charlist()
       @type public_key :: binary()
-      @type opts :: Map.t()
+      @type opts :: term
 
       def authenticate(username, public_key, opts), do: false
 
