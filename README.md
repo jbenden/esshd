@@ -27,7 +27,7 @@ The package can be installed by adding `:esshd` to your list of dependencies in
 ```elixir
 def deps do
   [
-    {:esshd, "~> 0.2.0"}
+    {:esshd, "~> 0.2.1"}
   ]
 end
 ```
