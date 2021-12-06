@@ -127,6 +127,7 @@ defmodule Sshd.Server do
     # check the incoming network details via AccessList
     accesslist_module = Application.fetch_env!(:esshd, :access_list)
 
+    # credo:disable-for-next-line
     case apply(Module.concat([accesslist_module]), :permit?, [peer_address]) do
       false ->
         :disconnect
@@ -150,6 +151,7 @@ defmodule Sshd.Server do
   defp valid_password_for_user?(peer_address, username, password, state) do
     password_module = Application.fetch_env!(:esshd, :password_authenticator)
 
+    # credo:disable-for-next-line
     if apply(Module.concat([password_module]), :authenticate, [username, password]) do
       {true, state}
     else

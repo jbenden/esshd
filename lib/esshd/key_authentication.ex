@@ -44,6 +44,7 @@ defmodule Sshd.KeyAuthentication do
   def is_auth_key(key, user, daemon_options) do
     public_key_module = Application.fetch_env!(:esshd, :public_key_authenticator)
 
+    # credo:disable-for-next-line
     case apply(Module.concat([public_key_module]), :authenticate, [user, key, daemon_options]) do
       false ->
         false
@@ -66,6 +67,7 @@ defmodule Sshd.KeyAuthentication do
         end
 
       {:ok, fun} ->
+        # credo:disable-for-next-line
         apply(fun, [user])
     end
   end
