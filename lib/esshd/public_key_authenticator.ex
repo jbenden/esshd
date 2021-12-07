@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: Apache-2.0
 defmodule Sshd.PublicKeyAuthenticator do
   @moduledoc """
   This module helps with Public Key authentication.

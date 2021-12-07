@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: Apache-2.0
 defmodule Sshd.ShellHandler do
   @moduledoc """
   As incoming SSH connections are accepted, authorized, and request remote

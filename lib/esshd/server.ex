@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: Apache-2.0
 defmodule Sshd.Server do
   @moduledoc """
   The module that encompasses the SSH socket acceptor and

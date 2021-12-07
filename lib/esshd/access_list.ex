@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: Apache-2.0
 defmodule Sshd.AccessList do
   @moduledoc """
   This module provides a means to permit incoming SSH connections based on

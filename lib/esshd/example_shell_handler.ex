@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: Apache-2.0
 defmodule Sshd.ShellHandler.Example do
   @moduledoc """
   An example implementation of `Sshd.ShellHandler`, implementing a very simple

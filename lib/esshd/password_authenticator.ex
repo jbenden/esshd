@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: Apache-2.0
 defmodule Sshd.PasswordAuthenticator do
   @moduledoc """
   This module helps to implement password-based authentication.
