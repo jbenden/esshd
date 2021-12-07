@@ -21,9 +21,9 @@ A very simple way to add SSH server capabilities to an Elixir application.
 
 ## BOM notice
 
-At runtime :esshd only requires the Erlang runtime and OTP.
+At runtime `:esshd` only requires the Erlang runtime and OTP.
 
-During the development of :esshd, some third-party software is used
+During the development of `:esshd`, some third-party software is used
 and required. This third-party software is ONLY used as supporting
 material, for quality assurance purposes. No output or files from the
 third-party software has been included in any final release software.
