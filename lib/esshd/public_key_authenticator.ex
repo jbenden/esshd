@@ -141,7 +141,7 @@ defmodule Sshd.PublicKeyAuthenticator.AuthorizedKeys do
         ) :: list
 
   defp ssh_decode_line(line, type) do
-    :public_key.ssh_decode(line, type)
+    :ssh_file.decode(line, type)  # OTP 24.0 or later
   rescue
     _ -> []
   end
