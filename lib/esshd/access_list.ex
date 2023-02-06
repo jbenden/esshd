@@ -2,7 +2,9 @@
 defmodule Sshd.AccessList do
   @moduledoc """
   This module provides a means to permit incoming SSH connections based on
-  the remote IP address and TCP port.
+  the remote IP address and TCP port. Note that this is only applied to
+  password authentication, and doesn't control whether a connection is
+  accepted.
   """
 
   @type ip_address :: :inet.ip_address()
