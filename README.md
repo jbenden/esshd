@@ -146,7 +146,9 @@ configured for use, at application boot time.
   address and ports, by simple return of a boolean value that
   states if the remote connection is accepted. While it may seem
   simplistic, at first, a behavior may be as complex as time-
-  based, quantity of already connected peers, etc.
+  based, quantity of already connected peers, etc. Note that this
+  currently only applies to password authentication, and is only
+  applied after the connection is accepted.
 - `Sshd.PasswordAuthenticator`: offers a means for username and
   password verification. The behavior offers NO throttling or any
   such complexity and MUST be securely interfaced to a trusted
