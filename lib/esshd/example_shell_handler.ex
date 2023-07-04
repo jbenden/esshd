@@ -14,9 +14,7 @@ defmodule Sshd.ShellHandler.Example do
   def on_connect(username, ip, port, method) do
     Logger.debug(fn ->
       """
-      Incoming SSH shell #{inspect(self())} requested for #{username} from #{inspect(ip)}:#{
-        inspect(port)
-      } using #{inspect(method)}
+      Incoming SSH shell #{inspect(self())} requested for #{username} from #{inspect(ip)}:#{inspect(port)} using #{inspect(method)}
       """
     end)
   end
@@ -53,7 +51,7 @@ defmodule Sshd.ShellHandler.Example do
         loop(%{state | counter: state.counter + 1})
 
       {:input, ^input, msg} ->
-        :ok = Logger.warn("received unknown message: #{inspect(msg)}")
+        :ok = Logger.warning("received unknown message: #{inspect(msg)}")
         loop(%{state | counter: state.counter + 1})
     end
   end

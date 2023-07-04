@@ -82,7 +82,7 @@ defmodule Sshd.ShellHandler do
           :ok = on_shell(username, ssh_publickey, ip_address, port_number)
         rescue
           _ ->
-            _ = Logger.warn("Exception caught")
+            _ = Logger.warning("Exception caught")
             :ok
         end
 
