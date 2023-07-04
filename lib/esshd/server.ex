@@ -113,9 +113,7 @@ defmodule Sshd.Server do
   def on_password(username, password, peer_address, state) do
     :ok =
       Logger.debug(fn ->
-        "Checking #{inspect(username)} with password #{inspect(password)} from #{
-          inspect(peer_address)
-        }"
+        "Checking #{inspect(username)} with password #{inspect(password)} from #{inspect(peer_address)}"
       end)
 
     # credo:disable-for-next-line
@@ -159,7 +157,7 @@ defmodule Sshd.Server do
       # drop the connection AFTER N password attempts
       if state.attempts >= 2 do
         :ok =
-          Logger.warn(
+          Logger.warning(
             "ATTEMPT TO ACCESS FAILED for #{inspect(username)} from #{inspect(peer_address)}"
           )
 
@@ -180,10 +178,8 @@ defmodule Sshd.Server do
   @doc false
   @spec on_shell_unauthorized(String.t(), peer_address, term) :: any
   def on_shell_unauthorized(username, {ip, port}, reason) do
-    Logger.warn("""
-    Authentication failure for #{inspect(username)} from #{inspect(ip)}:#{inspect(port)}: #{
-      inspect(reason)
-    }
+    Logger.warning("""
+    Authentication failure for #{inspect(username)} from #{inspect(ip)}:#{inspect(port)}: #{inspect(reason)}
     """)
   end
 
